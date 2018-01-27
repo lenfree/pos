@@ -1,0 +1,11 @@
+development:
+  dialect: "sqlite3"
+  database: /Users/lenfree/workspace/go/src/github.com/lenfree/pos_development.sqlite
+
+test:
+  dialect: "sqlite3"
+  database: /Users/lenfree/workspace/go/src/github.com/lenfree/pos_test.sqlite
+
+production:
+  dialect: "sqlite3"
+  database: /Users/lenfree/workspace/go/src/github.com/lenfree/pos_production.sqlite
