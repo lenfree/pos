@@ -38,10 +38,9 @@ func (as *ActionSuite) Test_CategoriesResource_Show() {
 	}
 
 	res := as.JSON("/api/v1/categories/%s", categories[0].ID).Get()
-	body := res.Body.String()
-	as.Contains(body, fmt.Sprintf("%s", categories[0].ID))
-	as.Contains(body, fmt.Sprintf("%s", categories[0].Name))
-	as.Contains(body, fmt.Sprintf("%s", categories[0].Description))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", categories[0].ID))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", categories[0].Name))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", categories[0].Description))
 }
 
 func (as *ActionSuite) Test_CategoriesResource_New() {
@@ -61,6 +60,8 @@ func (as *ActionSuite) Test_CategoriesResource_Create() {
 	as.NotZero(w.ID)
 	as.Equal("bolts", w.Name)
 	as.Contains(res.Body.String(), fmt.Sprintf("%v", w.ID))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", w.Name))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", w.Description))
 }
 
 func (as *ActionSuite) Test_CategoriesResource_Edit() {
@@ -88,19 +89,22 @@ func (as *ActionSuite) Test_CategoriesResource_Update() {
 	err = as.DB.Reload(category)
 	as.NoError(err)
 	as.Equal("Helmet", category.Name)
+	as.Equal("all helmets", category.Description)
 }
 
 func (as *ActionSuite) Test_CategoriesResource_Destroy() {
+	uuid1, _ := uuid.NewV4()
+	uuid2, _ := uuid.NewV4()
 	categories := models.Categories{
-		{ID: uuid.UUID{1}, Name: "tires", Description: "all types of tires"},
-		{ID: uuid.UUID{2}, Name: "bolts", Description: "all types of bolts"},
+		{ID: uuid1, Name: "tires", Description: "all types of tires"},
+		{ID: uuid2, Name: "bolts", Description: "all types of bolts"},
 	}
 	for _, t := range categories {
 		err := as.DB.Create(&t)
 		as.NoError(err)
 	}
 
-	res := as.JSON("/api/v1/categories/%s", categories[0].ID).Delete()
+	res := as.JSON("/api/v1/categories/%s", uuid1).Delete()
 	body := res.Body.String()
 	as.Contains(body, fmt.Sprintf("%s", categories[0].ID))
 	as.Contains(body, fmt.Sprintf("%s", categories[0].Name))

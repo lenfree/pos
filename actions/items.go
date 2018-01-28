@@ -70,9 +70,9 @@ func (v ItemsResource) Show(c buffalo.Context) error {
 	return c.Render(200, r.JSON(item))
 }
 
-// New default implementation. Returns a 404
+// New default implementation. Returns a 501
 func (v ItemsResource) New(c buffalo.Context) error {
-	return c.Error(404, errors.New("not available"))
+	return c.Error(501, errors.New("not implemented"))
 }
 
 // Create adds a Item to the DB. This function is mapped to the
@@ -106,9 +106,9 @@ func (v ItemsResource) Create(c buffalo.Context) error {
 	return c.Render(201, r.JSON(item))
 }
 
-// Edit default implementation. Returns a 404
+// Edit default implementation. Returns a 501
 func (v ItemsResource) Edit(c buffalo.Context) error {
-	return c.Error(404, errors.New("not available"))
+	return c.Error(501, errors.New("not implemented"))
 }
 
 // Update changes a Item in the DB. This function is mapped to

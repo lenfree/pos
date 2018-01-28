@@ -8,17 +8,16 @@ import (
 	"github.com/markbates/validate"
 	"github.com/markbates/validate/validators"
 	"github.com/satori/go.uuid"
-	"github.com/shopspring/decimal"
 )
 
 type Item struct {
-	ID          uuid.UUID       `json:"id" db:"id"`
-	CreatedAt   time.Time       `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time       `json:"updated_at" db:"updated_at"`
-	Name        string          `json:"name" db:"name"`
-	Description string          `json:"description" db:"description"`
-	Price       decimal.Decimal `json:"price" db:"price"`
-	CategoryID  uuid.UUID       `json:"category_id" db:"category_id"`
+	ID          uuid.UUID `json:"id" db:"id"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
+	Name        string    `json:"name" db:"name"`
+	Description string    `json:"description" db:"description"`
+	Price       float32   `json:"price" db:"price"`
+	CategoryID  uuid.UUID `json:"category_id" db:"category_id"`
 }
 
 // String is not required by pop and may be deleted
