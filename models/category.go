@@ -10,6 +10,11 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+type CategoryChildren struct {
+	*Category
+	*Items `json:"items"`
+}
+
 type Category struct {
 	ID          uuid.UUID `json:"id" db:"id"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`

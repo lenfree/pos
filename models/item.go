@@ -10,6 +10,11 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+type ItemParent struct {
+	*Item
+	*Category `json:"category"`
+}
+
 type Item struct {
 	ID          uuid.UUID `json:"id" db:"id"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
@@ -41,6 +46,7 @@ func (i *Item) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
 		&validators.StringIsPresent{Field: i.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: i.Description, Name: "Description"},
+		&validators.UUIDIsPresent{Field: i.CategoryID, Name: "CategoryID"},
 	), nil
 }
 

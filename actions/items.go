@@ -34,20 +34,39 @@ func (v ItemsResource) List(c buffalo.Context) error {
 	}
 
 	items := &models.Items{}
-
+	//category := &models.Category{}
 	// Paginate results. Params "page" and "per_page" control pagination.
 	// Default values are "page=1" and "per_page=20".
 	q := tx.PaginateFromParams(c.Params())
 
-	// Retrieve all Items from the DB
+	//// Retrieve all Items from the DB
 	if err := q.All(items); err != nil {
+		//if err := q.BelongsTo(category).All(items); err != nil {
 		return errors.WithStack(err)
+	}
+
+	var data []models.ItemParent
+	for _, i := range *items {
+		category := &models.Category{}
+		item := &models.Item{}
+		if err := tx.Find(item, i.ID); err != nil {
+			return c.Error(404, err)
+		}
+
+		if err := tx.Find(category, item.CategoryID); err != nil {
+			return c.Error(404, err)
+		}
+
+		data = append(data, models.ItemParent{
+			Category: category,
+			Item:     item,
+		})
 	}
 
 	// Add the paginator to the headers so clients know how to paginate.
 	c.Response().Header().Set("X-Pagination", q.Paginator.String())
 
-	return c.Render(200, r.JSON(items))
+	return c.Render(200, r.JSON(data))
 }
 
 // Show gets the data for one Item. This function is mapped to
@@ -61,18 +80,27 @@ func (v ItemsResource) Show(c buffalo.Context) error {
 
 	// Allocate an empty Item
 	item := &models.Item{}
+	category := &models.Category{}
 
 	// To find the Item the parameter item_id is used.
 	if err := tx.Find(item, c.Param("item_id")); err != nil {
 		return c.Error(404, err)
 	}
 
-	return c.Render(200, r.JSON(item))
+	if err := tx.Find(category, item.CategoryID); err != nil {
+		return c.Error(404, err)
+	}
+
+	data := &models.ItemParent{
+		Item:     item,
+		Category: category,
+	}
+	return c.Render(200, r.JSON(data))
 }
 
-// New default implementation. Returns a 501
+// New default implementation. Returns a 404
 func (v ItemsResource) New(c buffalo.Context) error {
-	return c.Error(501, errors.New("not implemented"))
+	return c.Error(404, errors.New("not available"))
 }
 
 // Create adds a Item to the DB. This function is mapped to the
@@ -106,9 +134,9 @@ func (v ItemsResource) Create(c buffalo.Context) error {
 	return c.Render(201, r.JSON(item))
 }
 
-// Edit default implementation. Returns a 501
+// Edit default implementation. Returns a 404
 func (v ItemsResource) Edit(c buffalo.Context) error {
-	return c.Error(501, errors.New("not implemented"))
+	return c.Error(404, errors.New("not available"))
 }
 
 // Update changes a Item in the DB. This function is mapped to

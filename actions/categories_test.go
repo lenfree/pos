@@ -33,8 +33,9 @@ func (as *ActionSuite) Test_CategoriesResource_Show() {
 		{ID: uuid.UUID{2}, Name: "bolts", Description: "all types of bolts"},
 	}
 	for _, t := range categories {
-		err := as.DB.Create(&t)
+		verrs, err := as.DB.ValidateAndCreate(&t)
 		as.NoError(err)
+		as.False(verrs.HasAny())
 	}
 
 	res := as.JSON("/api/v1/categories/%s", categories[0].ID).Get()

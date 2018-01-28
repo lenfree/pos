@@ -44,10 +44,26 @@ func (v CategoriesResource) List(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 
+	var data []models.CategoryChildren
+	for _, d := range *categories {
+		category := &models.Category{}
+		items := &models.Items{}
+		if err := tx.Find(category, d.ID); err != nil {
+			return c.Error(404, err)
+		}
+		if err := tx.BelongsTo(category).All(items); err != nil {
+			return c.Error(404, err)
+		}
+		data = append(data, models.CategoryChildren{
+			Category: category,
+			Items:    items,
+		})
+	}
+
 	// Add the paginator to the headers so clients know how to paginate.
 	c.Response().Header().Set("X-Pagination", q.Paginator.String())
 
-	return c.Render(200, r.JSON(categories))
+	return c.Render(200, r.JSON(data))
 }
 
 // Show gets the data for one Category. This function is mapped to
@@ -59,15 +75,25 @@ func (v CategoriesResource) Show(c buffalo.Context) error {
 		return errors.WithStack(errors.New("no transaction found"))
 	}
 
-	// Allocate an empty Category
+	// Allocate an empty Item
 	category := &models.Category{}
+	items := &models.Items{}
 
 	// To find the Category the parameter category_id is used.
 	if err := tx.Find(category, c.Param("category_id")); err != nil {
 		return c.Error(404, err)
 	}
 
-	return c.Render(200, r.JSON(category))
+	if err := tx.BelongsTo(category).All(items); err != nil {
+		return c.Error(404, err)
+	}
+
+	data := &models.CategoryChildren{
+		Category: category,
+		Items:    items,
+	}
+	return c.Render(200, r.JSON(data))
+
 }
 
 // New default implementation. Returns a 501 not implemented

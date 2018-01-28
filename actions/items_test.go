@@ -52,20 +52,35 @@ func (as *ActionSuite) Test_ItemsResource_List() {
 
 func (as *ActionSuite) Test_ItemsResource_Show() {
 	uuid1, _ := uuid.NewV4()
-	item := &models.Item{
-		Name:        "kumho 2x2",
-		Description: "kumho 2x2",
-		CategoryID:  uuid1,
-		Price:       12.5,
+	categories := models.Categories{
+		{ID: uuid1, Name: "bolts", Description: "all types of bolts"},
 	}
-	verrs, err := as.DB.ValidateAndCreate(item)
-	as.NoError(err)
-	as.False(verrs.HasAny())
-	res := as.JSON("/api/v1/items/%s", item.ID).Get()
-	as.Contains(res.Body.String(), fmt.Sprintf("%s", item.ID))
-	as.Contains(res.Body.String(), fmt.Sprintf("%s", item.Name))
-	as.Contains(res.Body.String(), fmt.Sprintf("%s", item.Description))
-	as.Contains(res.Body.String(), fmt.Sprintf("%g", item.Price))
+	for _, t := range categories {
+		verrs, err := as.DB.ValidateAndCreate(&t)
+		as.NoError(err)
+		as.False(verrs.HasAny())
+	}
+
+	items := models.Items{
+		{
+			ID:          uuid.UUID{1},
+			Name:        "kumho 2x2",
+			Description: "kumho 2x2",
+			CategoryID:  uuid1,
+			Price:       12.5,
+		},
+	}
+	for _, t := range items {
+		verrs, err := as.DB.ValidateAndCreate(&t)
+		as.NoError(err)
+		as.False(verrs.HasAny())
+	}
+	res := as.JSON("/api/v1/items/%s", items[0].ID).Get()
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", items[0].ID))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", items[0].Name))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", items[0].Description))
+	as.Contains(res.Body.String(), fmt.Sprintf("%g", items[0].Price))
+	as.Contains(res.Body.String(), fmt.Sprintf("%s", items[0].CategoryID))
 }
 
 func (as *ActionSuite) Test_ItemsResource_New() {
