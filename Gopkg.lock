@@ -355,6 +355,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  name = "github.com/shopspring/decimal"
+  packages = ["."]
+  revision = "9ca7f51822d222ae4e246f070f9aad863599bd1a"
+  version = "1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/shurcooL/github_flavored_markdown"
   packages = ["."]
@@ -485,6 +491,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7db8604285e2e15b3a1bc29b84ee2703b7fcef1b1dd96ae2d0a3533ea0ed03f9"
+  inputs-digest = "08ee365d4fabab7e53def0dbc3168bc576028b534e475eeb5a4cc1651007cf98"
   solver-name = "gps-cdcl"
   solver-version = 1

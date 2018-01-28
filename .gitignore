@@ -12,3 +12,5 @@ pos
 .vscode/
 .grifter/
 .env
+pos_development.sqlite pos_production.sqlite pos_test.sqlite
+tmp

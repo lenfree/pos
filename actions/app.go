@@ -25,6 +25,7 @@ func App() *buffalo.App {
 			Env:          ENV,
 			SessionStore: sessions.Null{},
 			SessionName:  "_pos_session",
+			LooseSlash:   true,
 		})
 		// Automatically redirect to SSL
 		app.Use(ssl.ForceSSL(secure.Options{
@@ -45,7 +46,10 @@ func App() *buffalo.App {
 		app.Use(middleware.PopTransaction(models.DB))
 
 		app.GET("/", HomeHandler)
+		g := app.Group("/api/v1")
 
+		g.Resource("/categories", CategoriesResource{})
+		g.Resource("/items", ItemsResource{})
 	}
 
 	return app
